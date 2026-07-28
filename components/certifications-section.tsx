@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { CERTIFICATIONS, Certification } from "@/data/certs";
 import { DocumentIcon, StarIcon, BadgeCheckIcon } from "@/components/icons";
@@ -10,7 +10,6 @@ const CATEGORY_LABELS: Record<Certification["type"], { label: string; bg: string
   career_path: { label: "Ruta Completa", bg: "bg-primary-500/20", border: "border-primary-500/50", text: "text-primary-300" },
   specialization: { label: "Especialización", bg: "bg-amber-500/20", border: "border-amber-500/40", text: "text-amber-300" },
   course: { label: "Curso", bg: "bg-carbon-700/60", border: "border-carbon-600/60", text: "text-slate-400" },
-  // Agregamos un nuevo tipo de certificación
   certification: { label: "Certificación", bg: "bg-green-500/20", border: "border-green-500/40", text: "text-green-300" },
 };
 
@@ -25,29 +24,28 @@ const ISSUER_STYLES: Record<string, { badge: string; dot: string; imageClass: st
     badge: "bg-azure-950/60 border-azure-600/50 text-azure-300",
     dot: "bg-azure-400 animate-pulse",
     imageClass: "object-contain",
-    gradient: "from-azure-600/20 to-azure-950/40",
+    gradient: "from-azure-600/20 via-azure-950/30 to-carbon-900",
     accentBorder: "border-azure-500/30",
   },
   Netzun: {
     badge: "bg-amber-950/60 border-amber-600/50 text-amber-300",
     dot: "bg-amber-400",
     imageClass: "object-contain rounded-md",
-    gradient: "from-amber-500/20 to-amber-950/40",
+    gradient: "from-amber-500/20 via-amber-950/30 to-carbon-900",
     accentBorder: "border-amber-500/30",
   },
   DEFAULT: {
     badge: "bg-carbon-800/80 border-carbon-600/60 text-slate-300",
     dot: "bg-primary-400",
     imageClass: "object-contain rounded-md",
-    gradient: "from-carbon-700/20 to-carbon-900/40",
+    gradient: "from-carbon-700/20 via-carbon-800/30 to-carbon-900",
     accentBorder: "border-carbon-600/30",
   },
-  // Agregamos un nuevo estilo para un emisor
   "Nueva Empresa": {
     badge: "bg-purple-950/60 border-purple-600/50 text-purple-300",
     dot: "bg-purple-400",
     imageClass: "object-contain rounded-md",
-    gradient: "from-purple-500/20 to-purple-950/40",
+    gradient: "from-purple-500/20 via-purple-950/30 to-carbon-900",
     accentBorder: "border-purple-500/30",
   },
 };
@@ -82,8 +80,13 @@ export const CertificationsSection = () => {
   const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
   const [copiedId, setCopiedId] = useState(false);
   const [showPdf, setShowPdf] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
+
+  const handleCloseModal = useCallback(() => {
+    setSelectedCert(null);
+    setCopiedId(false);
+    setShowPdf(false);
+  }, []);
 
   useEffect(() => {
     if (selectedCert) {
@@ -101,11 +104,11 @@ export const CertificationsSection = () => {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedCert(null);
+      if (e.key === "Escape") handleCloseModal();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [handleCloseModal]);
 
   const filteredCerts = useMemo(() => {
     if (filter === "cisco") return CERTIFICATIONS.filter((c) => c.issuer === "Cisco Networking Academy");
@@ -129,12 +132,6 @@ export const CertificationsSection = () => {
     setShowPdf(openPdf);
   }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setSelectedCert(null);
-    setCopiedId(false);
-    setShowPdf(false);
-  }, []);
-
   const handleCopyId = useCallback(() => {
     if (selectedCert?.credentialId) {
       copyToClipboard(selectedCert.credentialId);
@@ -148,6 +145,7 @@ export const CertificationsSection = () => {
     const catStyle = CATEGORY_LABELS[cert.type] || CATEGORY_LABELS.course;
     const hasPdf = !!cert.pdfUrl;
     const isFeatured = !!cert.featured;
+    const skillsList = cert.skills || [];
 
     return (
       <motion.div
@@ -214,14 +212,14 @@ export const CertificationsSection = () => {
               )}
 
               <div className="flex flex-wrap gap-1 mb-2">
-                {cert.skills.slice(0, isFeatured ? 5 : 4).map((skill) => (
+                {skillsList.slice(0, isFeatured ? 5 : 4).map((skill) => (
                   <span key={skill} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-400 hover:bg-carbon-700 hover:text-slate-300 transition-colors">
                     {skill}
                   </span>
                 ))}
-                {cert.skills.length > (isFeatured ? 5 : 4) && (
+                {skillsList.length > (isFeatured ? 5 : 4) && (
                   <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-500">
-                    +{cert.skills.length - (isFeatured ? 5 : 4)}
+                    +{skillsList.length - (isFeatured ? 5 : 4)}
                   </span>
                 )}
               </div>
@@ -260,6 +258,10 @@ export const CertificationsSection = () => {
     { id: "infra", label: "Infra", count: CATEGORY_STATS.infra.count },
     { id: "pentesting", label: "Pentesting", count: CATEGORY_STATS.pentesting.count },
   ], [stats]);
+
+  const modalIssuerStyle = selectedCert
+    ? ISSUER_STYLES[selectedCert.issuer] || ISSUER_STYLES.DEFAULT
+    : ISSUER_STYLES.DEFAULT;
 
   return (
     <section id="certificaciones" className="max-w-6xl mx-auto px-4 py-12 border-b border-carbon-600/60 w-full relative">
@@ -339,13 +341,7 @@ export const CertificationsSection = () => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Encabezado fijo del Modal */}
-              <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 text-center bg-gradient-to-b ${
-                selectedCert.issuer === "Cisco Networking Academy"
-                  ? "from-azure-600/20 via-azure-950/30 to-carbon-900"
-                  : selectedCert.issuer === "Netzun"
-                  ? "from-amber-500/20 via-amber-950/30 to-carbon-900"
-                  : "from-carbon-700/20 via-carbon-800/30 to-carbon-900"
-              }`}>
+              <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 text-center bg-gradient-to-b ${modalIssuerStyle.gradient}`}>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xs font-mono text-primary-300 uppercase tracking-wider">
                     {showPdf ? "Documento PDF Oficial" : "Detalle de Credencial"}
@@ -362,13 +358,7 @@ export const CertificationsSection = () => {
                 </div>
 
                 <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
-                  <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border uppercase tracking-widest ${
-                    selectedCert.issuer === "Cisco Networking Academy"
-                      ? "bg-azure-950 border-azure-600 text-azure-300"
-                      : selectedCert.issuer === "Netzun"
-                      ? "bg-amber-950 border-amber-600 text-amber-300"
-                      : "bg-carbon-800 border-carbon-600 text-slate-300"
-                  }`}>
+                  <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border uppercase tracking-widest ${modalIssuerStyle.badge}`}>
                     {selectedCert.issuer}
                   </span>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
@@ -397,7 +387,6 @@ export const CertificationsSection = () => {
 
               {/* Contenido deslizable del Modal */}
               <div
-                ref={scrollRef}
                 className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1 bg-carbon-900"
               >
                 {showPdf && selectedCert.pdfUrl ? (
@@ -481,7 +470,7 @@ export const CertificationsSection = () => {
                           Competencias & Temas Acreditados
                         </h4>
                         <div className="flex flex-wrap gap-1.5">
-                          {selectedCert.skills.map((skill) => (
+                          {(selectedCert.skills || []).map((skill) => (
                             <span key={skill} className="text-xs font-mono px-2.5 py-1 rounded bg-carbon-800 border border-carbon-600 text-slate-200 hover:bg-carbon-700 hover:border-carbon-500 transition-colors">
                               {skill}
                             </span>
