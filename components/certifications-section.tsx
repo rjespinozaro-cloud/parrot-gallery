@@ -53,7 +53,9 @@ const MODAL_VARIANTS = {
 };
 
 function copyToClipboard(text: string) {
-  navigator.clipboard.writeText(text).catch(() => {});
+  if (typeof navigator !== "undefined" && navigator.clipboard) {
+    navigator.clipboard.writeText(text).catch(() => {});
+  }
 }
 
 export const CertificationsSection = () => {
@@ -107,11 +109,11 @@ export const CertificationsSection = () => {
     netzun: CERTIFICATIONS.filter((c) => c.issuer === "Netzun").length,
   }), []);
 
-  const handleSelectCert = useCallback((cert: Certification, openPdf = false) => {
+  const openCertModal = (cert: Certification, openPdfDirectly = false) => {
     setSelectedCert(cert);
     setCopiedId(false);
-    setShowPdf(openPdf);
-  }, []);
+    setShowPdf(openPdfDirectly);
+  };
 
   const handleCopyId = useCallback(() => {
     if (selectedCert?.credentialId) {
@@ -176,6 +178,7 @@ export const CertificationsSection = () => {
         {filterTabs.map((tab) => (
           <button
             key={tab.id}
+            type="button"
             onClick={() => setFilter(tab.id)}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all border ${
               filter === tab.id
@@ -202,8 +205,8 @@ export const CertificationsSection = () => {
               key={cert.id}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05, duration: 0.4 }}
-              onClick={() => handleSelectCert(cert, false)}
+              transition={{ delay: index * 0.04, duration: 0.3 }}
+              onClick={() => openCertModal(cert, false)}
               className="group cursor-pointer rounded-2xl border border-carbon-600/80 bg-carbon-800/70 p-5 backdrop-blur-xl transition-all duration-300 hover:border-primary-500/50 hover:shadow-[0_0_30px_rgba(15,118,110,0.12)] hover:-translate-y-1 flex flex-col justify-between"
             >
               <div>
@@ -258,9 +261,9 @@ export const CertificationsSection = () => {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectCert(cert, false);
+                      openCertModal(cert, false);
                     }}
-                    className="font-mono text-[11px] text-primary-400 flex items-center gap-1.5 group-hover:gap-2.5 transition-all text-left bg-transparent border-0 p-0 cursor-pointer"
+                    className="font-mono text-[11px] text-primary-400 flex items-center gap-1.5 hover:text-primary-300 transition-colors bg-transparent border-0 p-0 cursor-pointer"
                   >
                     Ver credencial →
                   </button>
@@ -269,9 +272,9 @@ export const CertificationsSection = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSelectCert(cert, true);
+                        openCertModal(cert, true);
                       }}
-                      className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors cursor-pointer"
+                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-colors cursor-pointer font-bold"
                     >
                       PDF
                     </button>
@@ -304,7 +307,7 @@ export const CertificationsSection = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="relative w-full max-w-2xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[750px] bg-carbon-900"
+              className="relative w-full max-w-2xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[720px] bg-carbon-900"
               onClick={(e) => e.stopPropagation()}
             >
               <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 text-center bg-gradient-to-b ${modalIssuerStyle.gradient}`}>
@@ -313,6 +316,7 @@ export const CertificationsSection = () => {
                     {showPdf ? "Documento PDF Oficial" : "Detalle de Credencial"}
                   </h3>
                   <button
+                    type="button"
                     onClick={handleCloseModal}
                     aria-label="Cerrar"
                     className="p-1.5 rounded-lg bg-carbon-800/80 border border-carbon-600/60 text-slate-400 hover:text-white transition-colors"
@@ -347,9 +351,10 @@ export const CertificationsSection = () => {
 
               <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1 bg-carbon-900">
                 {showPdf && selectedCert.pdfUrl ? (
-                  <div className="flex flex-col h-full space-y-4">
+                  <div className="flex flex-col h-full space-y-3">
                     <div className="flex items-center justify-between gap-2 shrink-0">
                       <button
+                        type="button"
                         onClick={() => setShowPdf(false)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-300 hover:text-white hover:border-slate-400 transition-colors text-xs font-mono"
                       >
@@ -365,7 +370,7 @@ export const CertificationsSection = () => {
                       </a>
                     </div>
 
-                    <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden flex-1 min-h-[300px]">
+                    <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden flex-1 min-h-[350px]">
                       <iframe
                         src={selectedCert.pdfUrl}
                         className="w-full h-full border-0"
@@ -376,7 +381,7 @@ export const CertificationsSection = () => {
                 ) : (
                   <>
                     <div className="flex justify-center p-4 bg-carbon-950 rounded-xl border border-carbon-800 shrink-0">
-                      <div className="relative w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
+                      <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
                         <Image
                           src={selectedCert.badgeUrl}
                           alt={selectedCert.title}
@@ -409,6 +414,7 @@ export const CertificationsSection = () => {
                               {selectedCert.credentialId}
                             </code>
                             <button
+                              type="button"
                               onClick={handleCopyId}
                               className="shrink-0 px-2.5 py-2 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-400 hover:text-primary-300 hover:border-primary-500/50 transition-all text-[10px] font-mono"
                               title="Copiar código"
@@ -435,6 +441,7 @@ export const CertificationsSection = () => {
                       {selectedCert.pdfUrl && (
                         <div className="pt-2">
                           <button
+                            type="button"
                             onClick={() => setShowPdf(true)}
                             className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-amber-600/15 border border-amber-500/30 hover:bg-amber-600/25 hover:border-amber-500/50 transition-all group"
                           >
@@ -445,7 +452,7 @@ export const CertificationsSection = () => {
                                   Ver Documento PDF Oficial
                                 </p>
                                 <p className="text-[10px] font-mono text-slate-400">
-                                  Haz clic para abrir el certificado en pantalla completa
+                                  Haz clic para abrir el certificado dentro del modal
                                 </p>
                               </div>
                             </div>
@@ -463,6 +470,7 @@ export const CertificationsSection = () => {
               <div className="flex items-center justify-between gap-3 p-4 border-t border-carbon-700/60 bg-carbon-900 shrink-0">
                 {selectedCert.pdfUrl && !showPdf ? (
                   <button
+                    type="button"
                     onClick={() => setShowPdf(true)}
                     className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-600/15 border border-amber-500/30 text-amber-300 hover:bg-amber-600/25 transition-all text-xs font-mono"
                   >
@@ -473,6 +481,7 @@ export const CertificationsSection = () => {
                   <div />
                 )}
                 <button
+                  type="button"
                   onClick={handleCloseModal}
                   className="px-4 py-2 rounded-lg bg-carbon-700/80 border border-carbon-500/60 text-slate-200 hover:border-slate-400 transition-all text-xs font-mono"
                 >
