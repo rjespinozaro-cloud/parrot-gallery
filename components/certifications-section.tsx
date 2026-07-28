@@ -26,6 +26,12 @@ const ISSUER_STYLES: Record<string, { badge: string; dot: string; imageClass: st
     imageClass: "object-contain rounded-md",
     gradient: "from-amber-500/20 via-amber-950/30 to-carbon-900",
   },
+  Internacionales: {
+    badge: "bg-purple-950/60 border-purple-600/50 text-purple-300",
+    dot: "bg-purple-400",
+    imageClass: "object-contain rounded-md",
+    gradient: "from-purple-500/20 via-purple-950/30 to-carbon-900",
+  },
   DEFAULT: {
     badge: "bg-carbon-800/80 border-carbon-600/60 text-slate-300",
     dot: "bg-primary-400",
