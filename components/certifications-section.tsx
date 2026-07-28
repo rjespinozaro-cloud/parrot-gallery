@@ -204,14 +204,6 @@ export const CertificationsSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05, duration: 0.4 }}
               onClick={() => handleSelectCert(cert, false)}
-              onKeyDown={(e: React.KeyboardEvent) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleSelectCert(cert, false);
-                }
-              }}
-              role="button"
-              tabIndex={0}
               className="group cursor-pointer rounded-2xl border border-carbon-600/80 bg-carbon-800/70 p-5 backdrop-blur-xl transition-all duration-300 hover:border-primary-500/50 hover:shadow-[0_0_30px_rgba(15,118,110,0.12)] hover:-translate-y-1 flex flex-col justify-between"
             >
               <div>
@@ -262,9 +254,16 @@ export const CertificationsSection = () => {
                 </div>
 
                 <div className="pt-2.5 border-t border-carbon-700/60 flex items-center justify-between">
-                  <span className="font-mono text-[11px] text-primary-400 flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectCert(cert, false);
+                    }}
+                    className="font-mono text-[11px] text-primary-400 flex items-center gap-1.5 group-hover:gap-2.5 transition-all text-left bg-transparent border-0 p-0 cursor-pointer"
+                  >
                     Ver credencial →
-                  </span>
+                  </button>
                   {cert.pdfUrl && (
                     <button
                       type="button"
