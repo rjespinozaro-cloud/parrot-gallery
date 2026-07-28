@@ -143,7 +143,7 @@ export const CertificationsSection = () => {
       <motion.div
         key={cert.id}
         variants={CARD_VARIANTS}
-        className={`group relative rounded-xl flex flex-col items-center text-center overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+        className={`group relative rounded-xl flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
           isFeatured
             ? "bg-gradient-to-b from-carbon-800/90 to-carbon-800/70 border border-primary-500/40 hover:border-primary-400/60 shadow-lg shadow-primary-950/20 hover:shadow-primary-900/30"
             : "bg-carbon-800/70 border border-carbon-600/80 hover:border-primary-500/40 hover:shadow-lg hover:shadow-primary-950/20"
@@ -160,7 +160,7 @@ export const CertificationsSection = () => {
 
         <div
           onClick={() => handleSelectCert(cert, false)}
-          className="cursor-pointer flex-1 flex flex-col items-center w-full p-4"
+          className="cursor-pointer flex-1 flex flex-col p-4"
         >
           {/* Contenedor centralizado de la imagen */}
           <div className="relative mx-auto mt-2 mb-4 w-44 h-44 sm:w-48 sm:h-48 overflow-hidden rounded-lg bg-carbon-900/60 flex items-center justify-center p-1">
@@ -173,9 +173,9 @@ export const CertificationsSection = () => {
             />
           </div>
 
-          <div className="flex-1 flex flex-col items-center justify-between w-full">
-            <div className="flex flex-col items-center w-full">
-              <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
+          <div className="flex-1 flex flex-col justify-between w-full">
+            <div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono border uppercase tracking-wider ${styles.badge}`}>
                   <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
                   {cert.issuer}
@@ -191,19 +191,19 @@ export const CertificationsSection = () => {
                 {cert.title}
               </h3>
 
-              <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2 mb-3 max-w-xs">
+              <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2 mb-3">
                 {cert.description}
               </p>
             </div>
 
-            <div className="flex flex-col items-center w-full">
+            <div>
               {cert.hours && (
                 <p className="text-[10px] font-mono text-slate-500 mb-2">
                   {cert.hours}
                 </p>
               )}
 
-              <div className="flex flex-wrap items-center justify-center gap-1 mb-2">
+              <div className="flex flex-wrap gap-1 mb-2">
                 {cert.skills.slice(0, isFeatured ? 5 : 4).map((skill) => (
                   <span key={skill} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-400 hover:bg-carbon-700 hover:text-slate-300 transition-colors">
                     {skill}
@@ -219,7 +219,7 @@ export const CertificationsSection = () => {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-2 px-4 pb-4 pt-0 w-full mt-auto">
+        <div className="flex items-center justify-between gap-2 px-4 pb-4 pt-0 w-full mt-auto">
           {hasPdf && (
             <button
               onClick={() => handleSelectCert(cert, true)}
@@ -232,7 +232,7 @@ export const CertificationsSection = () => {
           )}
           <button
             onClick={() => handleSelectCert(cert, false)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-700/60 border border-carbon-600/60 text-slate-300 hover:border-slate-400 hover:bg-carbon-700 transition-all text-[11px] font-mono"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-700/60 border border-carbon-600/60 text-slate-300 hover:border-slate-400 hover:bg-carbon-700 transition-all text-[11px] font-mono ml-auto"
           >
             Detalles
           </button>
@@ -329,7 +329,7 @@ export const CertificationsSection = () => {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Encabezado fijo del Modal */}
-              <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 bg-gradient-to-b ${
+              <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 text-center bg-gradient-to-b ${
                 selectedCert.issuer === "Cisco Networking Academy"
                   ? "from-azure-600/20 via-azure-950/30 to-carbon-900"
                   : selectedCert.issuer === "Netzun"
@@ -351,7 +351,7 @@ export const CertificationsSection = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
                   <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border uppercase tracking-widest ${
                     selectedCert.issuer === "Cisco Networking Academy"
                       ? "bg-azure-950 border-azure-600 text-azure-300"
@@ -376,9 +376,13 @@ export const CertificationsSection = () => {
                   )}
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-0.5">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-1">
                   {selectedCert.title}
                 </h3>
+                <p className="text-xs font-mono text-slate-400">
+                  Fecha: {selectedCert.date}
+                  {selectedCert.hours && <span className="ml-2 text-slate-500">· {selectedCert.hours}</span>}
+                </p>
               </div>
 
               {/* Contenido deslizable del Modal */}
@@ -417,20 +421,17 @@ export const CertificationsSection = () => {
                 ) : (
                   /* VISTA DE DETALLES COMPLETA */
                   <>
+                    {/* Visualizador centrado uniforme para TODOS los certificados */}
                     <div className="flex justify-center p-4 bg-carbon-950 rounded-xl border border-carbon-800">
-                      <div className={`relative ${
-                        selectedCert.issuer === "Cisco Networking Academy"
-                          ? "w-52 h-52 sm:w-60 sm:h-60"
-                          : "w-full h-64 sm:h-80"
-                      }`}>
+                      <div className="relative w-52 h-52 sm:w-64 sm:h-64 flex items-center justify-center">
                         <Image
                           src={selectedCert.badgeUrl}
                           alt={selectedCert.title}
                           fill
-                          className={`p-1 ${
+                          className={`p-1 object-contain ${
                             selectedCert.issuer === "Cisco Networking Academy"
-                              ? "object-contain drop-shadow-[0_0_20px_rgba(14,165,233,0.35)]"
-                              : "object-contain rounded-md"
+                              ? "drop-shadow-[0_0_20px_rgba(14,165,233,0.35)]"
+                              : "rounded-md"
                           }`}
                         />
                       </div>
