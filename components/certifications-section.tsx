@@ -2,7 +2,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { CERTIFICATIONS, Certification } from "@/data/certs";
-import { DocumentIcon, StarIcon, BadgeCheckIcon } from "@/components/icons";
+import { DocumentIcon, BadgeCheckIcon } from "@/components/icons";
 import { useLenis } from "@studio-freight/react-lenis";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -260,15 +260,16 @@ export const CertificationsSection = () => {
                     Ver credencial →
                   </span>
                   {cert.pdfUrl && (
-                    <span
+                    <button
+                      type="button"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSelectCert(cert, true);
                       }}
-                      className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+                      className="text-[9px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 transition-colors cursor-pointer"
                     >
                       PDF
-                    </span>
+                    </button>
                   )}
                 </div>
               </div>
