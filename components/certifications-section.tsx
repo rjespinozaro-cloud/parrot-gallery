@@ -293,7 +293,7 @@ export const CertificationsSection = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-carbon-950/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-carbon-950/80 backdrop-blur-sm"
             onClick={handleCloseModal}
             data-lenis-prevent
             role="dialog"
@@ -305,7 +305,7 @@ export const CertificationsSection = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="relative w-full max-w-2xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] bg-carbon-900"
+              className="relative w-full max-w-2xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[750px] bg-carbon-900"
               onClick={(e) => e.stopPropagation()}
             >
               <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 text-center bg-gradient-to-b ${modalIssuerStyle.gradient}`}>
@@ -348,8 +348,8 @@ export const CertificationsSection = () => {
 
               <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1 bg-carbon-900">
                 {showPdf && selectedCert.pdfUrl ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-col h-full space-y-4">
+                    <div className="flex items-center justify-between gap-2 shrink-0">
                       <button
                         onClick={() => setShowPdf(false)}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-300 hover:text-white hover:border-slate-400 transition-colors text-xs font-mono"
@@ -366,18 +366,18 @@ export const CertificationsSection = () => {
                       </a>
                     </div>
 
-                    <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden">
+                    <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden flex-1 min-h-[300px]">
                       <iframe
                         src={selectedCert.pdfUrl}
-                        className="w-full h-[60vh] min-h-[350px]"
+                        className="w-full h-full border-0"
                         title="PDF del certificado"
                       />
                     </div>
                   </div>
                 ) : (
                   <>
-                    <div className="flex justify-center p-4 bg-carbon-950 rounded-xl border border-carbon-800">
-                      <div className="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center">
+                    <div className="flex justify-center p-4 bg-carbon-950 rounded-xl border border-carbon-800 shrink-0">
+                      <div className="relative w-40 h-40 sm:w-48 sm:h-48 flex items-center justify-center">
                         <Image
                           src={selectedCert.badgeUrl}
                           alt={selectedCert.title}
