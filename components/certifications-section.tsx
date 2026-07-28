@@ -10,6 +10,8 @@ const CATEGORY_LABELS: Record<Certification["type"], { label: string; bg: string
   career_path: { label: "Ruta Completa", bg: "bg-primary-500/20", border: "border-primary-500/50", text: "text-primary-300" },
   specialization: { label: "Especialización", bg: "bg-amber-500/20", border: "border-amber-500/40", text: "text-amber-300" },
   course: { label: "Curso", bg: "bg-carbon-700/60", border: "border-carbon-600/60", text: "text-slate-400" },
+  // Agregamos un nuevo tipo de certificación
+  certification: { label: "Certificación", bg: "bg-green-500/20", border: "border-green-500/40", text: "text-green-300" },
 };
 
 const CATEGORY_STATS: Record<string, { label: string; count: number }> = {
@@ -39,6 +41,14 @@ const ISSUER_STYLES: Record<string, { badge: string; dot: string; imageClass: st
     imageClass: "object-contain rounded-md",
     gradient: "from-carbon-700/20 to-carbon-900/40",
     accentBorder: "border-carbon-600/30",
+  },
+  // Agregamos un nuevo estilo para un emisor
+  "Nueva Empresa": {
+    badge: "bg-purple-950/60 border-purple-600/50 text-purple-300",
+    dot: "bg-purple-400",
+    imageClass: "object-contain rounded-md",
+    gradient: "from-purple-500/20 to-purple-950/40",
+    accentBorder: "border-purple-500/30",
   },
 };
 
