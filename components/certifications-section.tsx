@@ -18,7 +18,7 @@ const CATEGORY_STATS: Record<string, { label: string; count: number }> = {
   pentesting: { label: "Pentesting", count: CERTIFICATIONS.filter((c) => c.category === "pentesting").length },
 };
 
-const ISSUER_STYLES = {
+const ISSUER_STYLES: Record<string, { badge: string; dot: string; imageClass: string; gradient: string; accentBorder: string }> = {
   "Cisco Networking Academy": {
     badge: "bg-azure-950/60 border-azure-600/50 text-azure-300",
     dot: "bg-azure-400 animate-pulse",
@@ -32,6 +32,13 @@ const ISSUER_STYLES = {
     imageClass: "object-contain rounded-md",
     gradient: "from-amber-500/20 to-amber-950/40",
     accentBorder: "border-amber-500/30",
+  },
+  DEFAULT: {
+    badge: "bg-carbon-800/80 border-carbon-600/60 text-slate-300",
+    dot: "bg-primary-400",
+    imageClass: "object-contain rounded-md",
+    gradient: "from-carbon-700/20 to-carbon-900/40",
+    accentBorder: "border-carbon-600/30",
   },
 };
 
@@ -126,18 +133,17 @@ export const CertificationsSection = () => {
     }
   }, [selectedCert]);
 
-  const renderBadgeCard = useCallback((cert: Certification, index: number) => {
-    const isCisco = cert.issuer === "Cisco Networking Academy";
-    const styles = ISSUER_STYLES[isCisco ? "Cisco Networking Academy" : "Netzun"];
-    const catStyle = CATEGORY_LABELS[cert.type];
+  const renderBadgeCard = useCallback((cert: Certification) => {
+    const styles = ISSUER_STYLES[cert.issuer] || ISSUER_STYLES.DEFAULT;
+    const catStyle = CATEGORY_LABELS[cert.type] || CATEGORY_LABELS.course;
     const hasPdf = !!cert.pdfUrl;
     const isFeatured = !!cert.featured;
 
     return (
-        <motion.div
-          key={cert.id}
-          variants={CARD_VARIANTS}
-          className={`group relative rounded-xl flex flex-col overflow-hidden transition-all duration-300 ${
+      <motion.div
+        key={cert.id}
+        variants={CARD_VARIANTS}
+        className={`group relative rounded-xl flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
           isFeatured
             ? "bg-gradient-to-b from-carbon-800/90 to-carbon-800/70 border border-primary-500/40 hover:border-primary-400/60 shadow-lg shadow-primary-950/20 hover:shadow-primary-900/30"
             : "bg-carbon-800/70 border border-carbon-600/80 hover:border-primary-500/40 hover:shadow-lg hover:shadow-primary-950/20"
@@ -154,57 +160,62 @@ export const CertificationsSection = () => {
 
         <div
           onClick={() => handleSelectCert(cert)}
-          className="cursor-pointer"
+          className="cursor-pointer flex-1 flex flex-col"
         >
           <div className={`relative mx-auto mt-4 overflow-hidden rounded-lg ${
             isFeatured ? "w-36 h-36 sm:w-40 sm:h-40" : "w-32 h-32 sm:w-36 sm:h-36"
-          } bg-carbon-900/60`}>
+          } bg-carbon-900/60 flex items-center justify-center p-2`}>
             <Image
               src={cert.badgeUrl}
               alt={cert.title}
               fill
+              sizes="(max-width: 640px) 144px, 160px"
               className={`p-1 transition-transform duration-300 group-hover:scale-105 ${styles.imageClass}`}
             />
           </div>
 
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono border uppercase tracking-wider ${styles.badge}`}>
-                <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
-                {cert.issuer}
-              </span>
-              <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${catStyle.bg} ${catStyle.border} ${catStyle.text}`}>
-                {catStyle.label}
-              </span>
+          <div className="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono border uppercase tracking-wider ${styles.badge}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${styles.dot}`} />
+                  {cert.issuer}
+                </span>
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${catStyle.bg} ${catStyle.border} ${catStyle.text}`}>
+                  {catStyle.label}
+                </span>
+              </div>
+
+              <h3 className={`font-bold text-white mb-1 leading-snug group-hover:text-primary-300 transition-colors line-clamp-2 ${
+                isFeatured ? "text-sm sm:text-base" : "text-sm"
+              }`}>
+                {cert.title}
+              </h3>
+
+              <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2 mb-2">
+                {cert.description}
+              </p>
             </div>
 
-            <h3 className={`font-bold text-white mb-1 leading-snug group-hover:text-primary-300 transition-colors line-clamp-2 ${
-              isFeatured ? "text-sm sm:text-base" : "text-sm"
-            }`}>
-              {cert.title}
-            </h3>
-
-            <p className="text-[11px] text-slate-400 leading-relaxed line-clamp-2 mb-2">
-              {cert.description}
-            </p>
-
-            {cert.hours && (
-              <p className="text-[10px] font-mono text-slate-500 mb-2">
-                {cert.hours}
-              </p>
-            )}
-
-            <div className="flex flex-wrap gap-1">
-              {cert.skills.slice(0, isFeatured ? 5 : 4).map((skill) => (
-                <span key={skill} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-400 hover:bg-carbon-700 hover:text-slate-300 transition-colors">
-                  {skill}
-                </span>
-              ))}
-              {cert.skills.length > (isFeatured ? 5 : 4) && (
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-500">
-                  +{cert.skills.length - (isFeatured ? 5 : 4)}
-                </span>
+            <div>
+              {cert.hours && (
+                <p className="text-[10px] font-mono text-slate-500 mb-2">
+                  {cert.hours}
+                </p>
               )}
+
+              <div className="flex flex-wrap gap-1">
+                {cert.skills.slice(0, isFeatured ? 5 : 4).map((skill) => (
+                  <span key={skill} className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-400 hover:bg-carbon-700 hover:text-slate-300 transition-colors">
+                    {skill}
+                  </span>
+                ))}
+                {cert.skills.length > (isFeatured ? 5 : 4) && (
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-carbon-700/60 border border-carbon-600/60 text-slate-500">
+                    +{cert.skills.length - (isFeatured ? 5 : 4)}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -222,7 +233,7 @@ export const CertificationsSection = () => {
           )}
           <button
             onClick={() => handleSelectCert(cert, false)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-700/60 border border-carbon-600/60 text-slate-300 hover:border-slate-400 hover:bg-carbon-700 transition-all text-[11px] font-mono"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-700/60 border border-carbon-600/60 text-slate-300 hover:border-slate-400 hover:bg-carbon-700 transition-all text-[11px] font-mono ml-auto"
           >
             Detalles
           </button>
@@ -273,7 +284,7 @@ export const CertificationsSection = () => {
             onClick={() => setFilter(tab.id)}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all border ${
               filter === tab.id
-                ? "bg-primary-600/25 border-primary-500 text-white"
+                ? "bg-primary-600/25 border-primary-500 text-white shadow-sm shadow-primary-500/20"
                 : "bg-carbon-800/80 border-carbon-600/80 text-slate-400 hover:text-slate-200 hover:border-carbon-500"
             }`}
           >
@@ -315,7 +326,7 @@ export const CertificationsSection = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="relative w-full max-w-xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh] bg-carbon-900"
               onClick={(e) => e.stopPropagation()}
             >
               <div
@@ -325,7 +336,9 @@ export const CertificationsSection = () => {
                 <div className={`bg-gradient-to-b ${
                   selectedCert.issuer === "Cisco Networking Academy"
                     ? "from-azure-600/20 via-azure-950/30 to-carbon-900"
-                    : "from-amber-500/20 via-amber-950/30 to-carbon-900"
+                    : selectedCert.issuer === "Netzun"
+                    ? "from-amber-500/20 via-amber-950/30 to-carbon-900"
+                    : "from-carbon-700/20 via-carbon-800/30 to-carbon-900"
                 }`}>
                   <div className="flex items-center justify-between p-4 border-b border-carbon-700/40">
                     <h3 className="text-sm font-mono text-primary-300 uppercase tracking-wider">
@@ -347,14 +360,18 @@ export const CertificationsSection = () => {
                       <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border uppercase tracking-widest ${
                         selectedCert.issuer === "Cisco Networking Academy"
                           ? "bg-azure-950 border-azure-600 text-azure-300"
-                          : "bg-amber-950 border-amber-600 text-amber-300"
+                          : selectedCert.issuer === "Netzun"
+                          ? "bg-amber-950 border-amber-600 text-amber-300"
+                          : "bg-carbon-800 border-carbon-600 text-slate-300"
                       }`}>
                         {selectedCert.issuer}
                       </span>
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                        CATEGORY_LABELS[selectedCert.type].bg
-                      } ${CATEGORY_LABELS[selectedCert.type].border} ${CATEGORY_LABELS[selectedCert.type].text}`}>
-                        {CATEGORY_LABELS[selectedCert.type].label}
+                        (CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).bg
+                      } ${(CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).border} ${
+                        (CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).text
+                      }`}>
+                        {(CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).label}
                       </span>
                       {selectedCert.featured && (
                         <span className="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-primary-500/20 border border-primary-500/40 text-primary-300">
@@ -375,7 +392,7 @@ export const CertificationsSection = () => {
 
                 <div className="bg-carbon-900 p-6">
                   <div className="flex justify-center mb-6 p-4 bg-carbon-950 rounded-xl border border-carbon-800">
-                    <div className={`relative ${selectedCert.issuer === "Cisco Networking Academy" ? "w-44 h-44 sm:w-52 sm:h-52" : "w-full h-64 sm:h-72"}`}>
+                    <div className={`relative ${selectedCert.issuer === "Cisco Networking Academy" ? "w-44 h-44 sm:w-52 sm:h-52" : "w-full h-56 sm:h-64"}`}>
                       <Image
                         src={selectedCert.badgeUrl}
                         alt={selectedCert.title}
@@ -400,7 +417,7 @@ export const CertificationsSection = () => {
                           Código de Credencial / Verificación
                         </h4>
                         <div className="flex items-center gap-2">
-                          <code className="flex-1 font-mono text-xs text-primary-300 bg-carbon-950 p-2.5 rounded border border-carbon-800 select-all">
+                          <code className="flex-1 font-mono text-xs text-primary-300 bg-carbon-950 p-2.5 rounded border border-carbon-800 select-all overflow-x-auto">
                             {selectedCert.credentialId}
                           </code>
                           <button
@@ -429,28 +446,40 @@ export const CertificationsSection = () => {
 
                     {selectedCert.pdfUrl && (
                       <div className="pt-2">
-                        <button
-                          onClick={() => setShowPdf((v) => !v)}
-                          className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-primary-600/10 border border-primary-500/30 hover:bg-primary-600/20 hover:border-primary-500/50 transition-all group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <DocumentIcon size={16} className="text-primary-400" />
-                            <div className="text-left">
-                              <p className="text-sm font-mono text-primary-200 group-hover:text-primary-100 transition-colors">
-                                Documento PDF Oficial
-                              </p>
-                              <p className="text-[10px] font-mono text-slate-400">
-                                {showPdf ? "Cerrar visor" : "Haz clic para ver el documento"}
-                              </p>
-                            </div>
-                          </div>
-                          <svg
-                            className={`w-5 h-5 text-primary-400 transition-transform duration-300 ${showPdf ? "rotate-180" : ""}`}
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        <div className="flex items-center gap-2 mb-2">
+                          <button
+                            onClick={() => setShowPdf((v) => !v)}
+                            className="flex-1 flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-primary-600/10 border border-primary-500/30 hover:bg-primary-600/20 hover:border-primary-500/50 transition-all group"
                           >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
+                            <div className="flex items-center gap-3">
+                              <DocumentIcon size={16} className="text-primary-400" />
+                              <div className="text-left">
+                                <p className="text-sm font-mono text-primary-200 group-hover:text-primary-100 transition-colors">
+                                  Documento PDF Oficial
+                                </p>
+                                <p className="text-[10px] font-mono text-slate-400">
+                                  {showPdf ? "Ocultar visor" : "Haz clic para desplegar documento"}
+                                </p>
+                              </div>
+                            </div>
+                            <svg
+                              className={`w-5 h-5 text-primary-400 transition-transform duration-300 ${showPdf ? "rotate-180" : ""}`}
+                              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+
+                          <a
+                            href={selectedCert.pdfUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-3 rounded-xl bg-carbon-800 border border-carbon-600 text-slate-300 hover:text-white hover:border-slate-400 transition-colors text-xs font-mono"
+                            title="Abrir PDF en pestaña nueva"
+                          >
+                            ↗
+                          </a>
+                        </div>
 
                         <motion.div
                           initial={false}
@@ -471,7 +500,7 @@ export const CertificationsSection = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-3 p-4 border-t border-carbon-700/60 bg-carbon-900">
+                <div className="flex items-center justify-end gap-3 p-4 border-t border-carbon-700/60 bg-carbon-900 sticky bottom-0">
                   <button
                     onClick={handleCloseModal}
                     className="px-4 py-2 rounded-lg bg-carbon-700/80 border border-carbon-500/60 text-slate-200 hover:border-slate-400 transition-all text-xs font-mono"
