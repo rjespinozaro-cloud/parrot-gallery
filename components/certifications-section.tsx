@@ -345,4 +345,138 @@ export const CertificationsSection = () => {
                     <div className="flex items-center justify-between gap-2">
                       <button
                         onClick={() => setShowPdf(false)}
-                        className="inline-flex items-center gap-1
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-300 hover:text-white hover:border-slate-400 transition-colors text-xs font-mono"
+                      >
+                        ← Volver a Detalles
+                      </button>
+                      <a
+                        href={selectedCert.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600/20 border border-primary-500/40 text-primary-300 hover:bg-primary-600/30 transition-colors text-xs font-mono"
+                      >
+                        Abrir en Pestaña Nueva ↗
+                      </a>
+                    </div>
+
+                    <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden">
+                      <iframe
+                        src={selectedCert.pdfUrl}
+                        className="w-full h-[60vh] min-h-[350px]"
+                        title="PDF del certificado"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex justify-center p-4 bg-carbon-950 rounded-xl border border-carbon-800">
+                      <div className="relative w-48 h-48 sm:w-56 sm:h-56 flex items-center justify-center">
+                        <Image
+                          src={selectedCert.badgeUrl}
+                          alt={selectedCert.title}
+                          fill
+                          className={`p-1 object-contain ${
+                            selectedCert.issuer === "Cisco Networking Academy"
+                              ? "drop-shadow-[0_0_20px_rgba(14,165,233,0.35)]"
+                              : "rounded-md"
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 text-sm text-slate-300">
+                      <div>
+                        <h4 className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">Descripción</h4>
+                        <p className="leading-relaxed bg-carbon-800/60 p-3 rounded-lg border border-carbon-700/60 text-xs sm:text-sm">
+                          {selectedCert.description}
+                        </p>
+                      </div>
+
+                      {selectedCert.credentialId && (
+                        <div>
+                          <h4 className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                            <BadgeCheckIcon size={12} className="text-primary-400" />
+                            Código de Credencial / Verificación
+                          </h4>
+                          <div className="flex items-center gap-2">
+                            <code className="flex-1 font-mono text-xs text-primary-300 bg-carbon-950 p-2.5 rounded border border-carbon-800 select-all overflow-x-auto">
+                              {selectedCert.credentialId}
+                            </code>
+                            <button
+                              onClick={handleCopyId}
+                              className="shrink-0 px-2.5 py-2 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-400 hover:text-primary-300 hover:border-primary-500/50 transition-all text-[10px] font-mono"
+                              title="Copiar código"
+                            >
+                              {copiedId ? "Copiado" : "Copiar"}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      <div>
+                        <h4 className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
+                          Competencias & Temas Acreditados
+                        </h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {(selectedCert.skills || []).map((skill) => (
+                            <span key={skill} className="text-xs font-mono px-2.5 py-1 rounded bg-carbon-800 border border-carbon-600 text-slate-200 hover:bg-carbon-700 hover:border-carbon-500 transition-colors">
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {selectedCert.pdfUrl && (
+                        <div className="pt-2">
+                          <button
+                            onClick={() => setShowPdf(true)}
+                            className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-amber-600/15 border border-amber-500/30 hover:bg-amber-600/25 hover:border-amber-500/50 transition-all group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <DocumentIcon size={16} className="text-amber-400" />
+                              <div className="text-left">
+                                <p className="text-sm font-mono text-amber-200 group-hover:text-amber-100 transition-colors">
+                                  Ver Documento PDF Oficial
+                                </p>
+                                <p className="text-[10px] font-mono text-slate-400">
+                                  Haz clic para abrir el certificado en pantalla completa
+                                </p>
+                              </div>
+                            </div>
+                            <span className="text-xs font-mono text-amber-400 group-hover:translate-x-0.5 transition-transform">
+                              Ver →
+                            </span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between gap-3 p-4 border-t border-carbon-700/60 bg-carbon-900 shrink-0">
+                {selectedCert.pdfUrl && !showPdf ? (
+                  <button
+                    onClick={() => setShowPdf(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-600/15 border border-amber-500/30 text-amber-300 hover:bg-amber-600/25 transition-all text-xs font-mono"
+                  >
+                    <DocumentIcon size={12} />
+                    Ver PDF
+                  </button>
+                ) : (
+                  <div />
+                )}
+                <button
+                  onClick={handleCloseModal}
+                  className="px-4 py-2 rounded-lg bg-carbon-700/80 border border-carbon-500/60 text-slate-200 hover:border-slate-400 transition-all text-xs font-mono"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  );
+};
