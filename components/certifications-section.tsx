@@ -29,7 +29,7 @@ const ISSUER_STYLES = {
   Netzun: {
     badge: "bg-amber-950/60 border-amber-600/50 text-amber-300",
     dot: "bg-amber-400",
-    imageClass: "object-cover rounded-md",
+    imageClass: "object-contain rounded-md",
     gradient: "from-amber-500/20 to-amber-950/40",
     accentBorder: "border-amber-500/30",
   },
@@ -37,11 +37,11 @@ const ISSUER_STYLES = {
 
 const CARD_VARIANTS = {
   hidden: { opacity: 0, y: 20 },
-  visible: (i: number) => ({
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.04, duration: 0.35, ease: "easeOut" },
-  }),
+    transition: { duration: 0.35, ease: "easeOut" },
+  },
 };
 
 const OVERLAY_VARIANTS = {
@@ -137,9 +137,6 @@ export const CertificationsSection = () => {
         <motion.div
           key={cert.id}
           variants={CARD_VARIANTS}
-          custom={index}
-          initial="hidden"
-          animate="visible"
           className={`group relative rounded-xl flex flex-col overflow-hidden transition-all duration-300 ${
           isFeatured
             ? "bg-gradient-to-b from-carbon-800/90 to-carbon-800/70 border border-primary-500/40 hover:border-primary-400/60 shadow-lg shadow-primary-950/20 hover:shadow-primary-900/30"
@@ -308,7 +305,7 @@ export const CertificationsSection = () => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-carbon-950/80 backdrop-blur-sm"
             onClick={handleCloseModal}
             data-lenis-prevent
             role="dialog"
@@ -320,14 +317,12 @@ export const CertificationsSection = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="relative w-full max-w-xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden"
-              style={{ maxHeight: "90vh" }}
+              className="relative w-full max-w-xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
               onClick={(e) => e.stopPropagation()}
             >
               <div
                 ref={scrollRef}
-                className="overflow-y-auto overscroll-contain rounded-2xl"
-                style={{ maxHeight: "90vh" }}
+                className="overflow-y-auto overscroll-contain flex-1"
               >
                 <div className={`bg-gradient-to-b ${
                   selectedCert.issuer === "Cisco Networking Academy"
@@ -468,8 +463,7 @@ export const CertificationsSection = () => {
                           <div className="mt-3 rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden">
                             <iframe
                               src={selectedCert.pdfUrl}
-                              className="w-full"
-                              style={{ height: "60vh", minHeight: "350px" }}
+                              className="w-full h-[50vh] min-h-[300px]"
                               title="PDF del certificado"
                             />
                           </div>
