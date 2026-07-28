@@ -51,9 +51,9 @@ const OVERLAY_VARIANTS = {
 };
 
 const MODAL_VARIANTS = {
-  hidden: { opacity: 0, scale: 0.94, y: 16 },
-  visible: { opacity: 1, scale: 1, y: 0, transition: { type: "spring", stiffness: 320, damping: 28 } },
-  exit: { opacity: 0, scale: 0.96, y: 8, transition: { duration: 0.15 } },
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 28 } },
+  exit: { opacity: 0, scale: 0.95, transition: { duration: 0.15 } },
 };
 
 function copyToClipboard(text: string) {
@@ -106,10 +106,10 @@ export const CertificationsSection = () => {
     netzun: CERTIFICATIONS.filter((c) => c.issuer === "Netzun").length,
   }), []);
 
-  const handleSelectCert = useCallback((cert: Certification) => {
+  const handleSelectCert = useCallback((cert: Certification, openPdf = false) => {
     setSelectedCert(cert);
     setCopiedId(false);
-    setShowPdf(false);
+    setShowPdf(openPdf);
   }, []);
 
   const handleCloseModal = useCallback(() => {
@@ -211,19 +211,17 @@ export const CertificationsSection = () => {
 
         <div className="flex items-center gap-2 px-4 pb-4 pt-0 mt-auto">
           {hasPdf && (
-            <a
-              href={cert.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => handleSelectCert(cert, true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600/15 border border-amber-500/30 text-amber-300 hover:bg-amber-600/25 hover:border-amber-500/50 transition-all text-[11px] font-mono"
               title="Ver Documento PDF"
             >
               <DocumentIcon size={12} />
               PDF
-            </a>
+            </button>
           )}
           <button
-            onClick={() => handleSelectCert(cert)}
+            onClick={() => handleSelectCert(cert, false)}
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-700/60 border border-carbon-600/60 text-slate-300 hover:border-slate-400 hover:bg-carbon-700 transition-all text-[11px] font-mono"
           >
             Detalles
