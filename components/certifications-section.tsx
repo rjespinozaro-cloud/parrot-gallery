@@ -3,7 +3,6 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { CERTIFICATIONS, Certification } from "@/data/certs";
 import { DocumentIcon, BadgeCheckIcon } from "@/components/icons";
-import { useLenis } from "@studio-freight/react-lenis";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CATEGORY_LABELS: Record<Certification["type"], { label: string; bg: string; border: string; text: string }> = {
@@ -63,7 +62,6 @@ export const CertificationsSection = () => {
   const [selectedCert, setSelectedCert] = useState<Certification | null>(null);
   const [copiedId, setCopiedId] = useState(false);
   const [showPdf, setShowPdf] = useState(false);
-  const lenis = useLenis();
 
   const handleCloseModal = useCallback(() => {
     setSelectedCert(null);
@@ -73,17 +71,14 @@ export const CertificationsSection = () => {
 
   useEffect(() => {
     if (selectedCert) {
-      lenis?.stop();
       document.body.style.overflow = "hidden";
     } else {
-      lenis?.start();
       document.body.style.overflow = "";
     }
     return () => {
-      lenis?.start();
       document.body.style.overflow = "";
     };
-  }, [selectedCert, lenis]);
+  }, [selectedCert]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -220,12 +215,12 @@ export const CertificationsSection = () => {
                   </span>
                 </div>
 
-                <div className="relative mx-auto my-3 w-32 h-32 flex items-center justify-center p-1">
+                <div className="relative mx-auto my-3 w-36 h-36 flex items-center justify-center p-1">
                   <Image
                     src={cert.badgeUrl}
                     alt={cert.title}
                     fill
-                    sizes="128px"
+                    sizes="144px"
                     className={`p-1 transition-transform duration-300 group-hover:scale-105 ${cfg.imageClass}`}
                   />
                 </div>
@@ -263,9 +258,10 @@ export const CertificationsSection = () => {
                       e.stopPropagation();
                       openCertModal(cert, false);
                     }}
-                    className="font-mono text-[11px] text-primary-400 flex items-center gap-1.5 hover:text-primary-300 transition-colors bg-transparent border-0 p-0 cursor-pointer"
+                    className="font-mono text-[11px] text-primary-400 flex items-center gap-1.5 hover:text-primary-300 transition-colors bg-transparent border-0 p-0 cursor-pointer group/btn"
                   >
-                    Ver credencial →
+                    Ver credencial
+                    <span className="inline-block transition-transform duration-300 group-hover/btn:rotate-[360deg]">→</span>
                   </button>
                   {cert.pdfUrl && (
                     <button
@@ -274,9 +270,9 @@ export const CertificationsSection = () => {
                         e.stopPropagation();
                         openCertModal(cert, true);
                       }}
-                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-colors cursor-pointer font-bold"
+                      className="text-[10px] font-mono px-2.5 py-1 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 hover:border-amber-400 transition-all cursor-pointer font-bold group/pdf"
                     >
-                      PDF
+                      <span className="inline-block transition-transform duration-500 group-hover/pdf:rotate-[360deg]">⬇</span> PDF
                     </button>
                   )}
                 </div>
@@ -286,7 +282,7 @@ export const CertificationsSection = () => {
         })}
       </div>
 
-      {/* Modal de Detalle / PDF */}
+      {/* Modal de Detalle / PDF - ESTRUCTURA CORREGIDA */}
       <AnimatePresence>
         {selectedCert && (
           <motion.div
@@ -297,7 +293,8 @@ export const CertificationsSection = () => {
             exit="exit"
             className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-carbon-950/80 backdrop-blur-sm"
             onClick={handleCloseModal}
-            data-lenis-prevent
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
           >
@@ -307,10 +304,12 @@ export const CertificationsSection = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="relative w-full max-w-2xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden flex flex-col h-[85vh] max-h-[720px] bg-carbon-900"
+              className="relative w-full max-w-2xl rounded-2xl border border-carbon-600/80 shadow-2xl overflow-hidden bg-carbon-900 flex flex-col"
+              style={{ maxHeight: "90vh" }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className={`p-4 sm:p-5 border-b border-carbon-700/60 shrink-0 text-center bg-gradient-to-b ${modalIssuerStyle.gradient}`}>
+              {/* HEADER FIJO */}
+              <div className={`shrink-0 p-4 sm:p-5 border-b border-carbon-700/60 bg-gradient-to-b ${modalIssuerStyle.gradient}`}>
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-xs font-mono text-primary-300 uppercase tracking-wider">
                     {showPdf ? "Documento PDF Oficial" : "Detalle de Credencial"}
@@ -327,61 +326,66 @@ export const CertificationsSection = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
-                  <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border uppercase tracking-widest ${modalIssuerStyle.badge}`}>
-                    {selectedCert.issuer}
-                  </span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                    (CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).bg
-                  } ${(CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).border} ${
-                    (CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).text
-                  }`}>
-                    {(CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).label}
-                  </span>
-                </div>
+                {!showPdf && (
+                  <>
+                    <div className="flex items-center justify-center gap-2 mb-2 flex-wrap">
+                      <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full border uppercase tracking-widest ${modalIssuerStyle.badge}`}>
+                        {selectedCert.issuer}
+                      </span>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                        (CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).bg
+                      } ${(CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).border} ${
+                        (CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).text
+                      }`}>
+                        {(CATEGORY_LABELS[selectedCert.type] || CATEGORY_LABELS.course).label}
+                      </span>
+                    </div>
 
-                <h3 className="text-lg sm:text-xl font-bold text-white mb-1">
-                  {selectedCert.title}
-                </h3>
-                <p className="text-xs font-mono text-slate-400">
-                  Fecha: {selectedCert.date}
-                  {selectedCert.hours && <span className="ml-2 text-slate-500">· {selectedCert.hours}</span>}
-                </p>
+                    <h3 className="text-lg sm:text-xl font-bold text-white mb-1">
+                      {selectedCert.title}
+                    </h3>
+                    <p className="text-xs font-mono text-slate-400">
+                      Fecha: {selectedCert.date}
+                      {selectedCert.hours && <span className="ml-2 text-slate-500">· {selectedCert.hours}</span>}
+                    </p>
+                  </>
+                )}
+
+                {showPdf && (
+                  <div className="flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowPdf(false)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-300 hover:text-white hover:border-slate-400 transition-colors text-xs font-mono"
+                    >
+                      ← Volver a Detalles
+                    </button>
+                    <a
+                      href={selectedCert.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600/20 border border-primary-500/40 text-primary-300 hover:bg-primary-600/30 transition-colors text-xs font-mono"
+                    >
+                      Abrir en Pestaña Nueva ↗
+                    </a>
+                  </div>
+                )}
               </div>
 
-              <div className="overflow-y-auto p-4 sm:p-6 space-y-6 flex-1 bg-carbon-900">
+              {/* CONTENIDO SCROLLABLE */}
+              <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-6 bg-carbon-900">
                 {showPdf && selectedCert.pdfUrl ? (
-                  <div className="flex flex-col h-full space-y-3">
-                    <div className="flex items-center justify-between gap-2 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => setShowPdf(false)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-carbon-800 border border-carbon-600 text-slate-300 hover:text-white hover:border-slate-400 transition-colors text-xs font-mono"
-                      >
-                        ← Volver a Detalles
-                      </button>
-                      <a
-                        href={selectedCert.pdfUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-600/20 border border-primary-500/40 text-primary-300 hover:bg-primary-600/30 transition-colors text-xs font-mono"
-                      >
-                        Abrir en Pestaña Nueva ↗
-                      </a>
-                    </div>
-
-                    <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden flex-1 min-h-[350px]">
-                      <iframe
-                        src={selectedCert.pdfUrl}
-                        className="w-full h-full border-0"
-                        title="PDF del certificado"
-                      />
-                    </div>
+                  <div className="rounded-xl border border-carbon-600/80 bg-carbon-950 overflow-hidden" style={{height: '65vh'}}>
+                    <iframe
+                      src={selectedCert.pdfUrl}
+                      className="w-full h-full border-0"
+                      title="PDF del certificado"
+                    />
                   </div>
                 ) : (
                   <>
-                    <div className="flex justify-center p-4 bg-carbon-950 rounded-xl border border-carbon-800 shrink-0">
-                      <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+                    <div className="flex justify-center p-6 bg-carbon-950 rounded-xl border border-carbon-800 shrink-0">
+                      <div className="relative w-44 h-44 sm:w-52 sm:h-52 flex items-center justify-center">
                         <Image
                           src={selectedCert.badgeUrl}
                           alt={selectedCert.title}
@@ -467,19 +471,8 @@ export const CertificationsSection = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-between gap-3 p-4 border-t border-carbon-700/60 bg-carbon-900 shrink-0">
-                {selectedCert.pdfUrl && !showPdf ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowPdf(true)}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-600/15 border border-amber-500/30 text-amber-300 hover:bg-amber-600/25 transition-all text-xs font-mono"
-                  >
-                    <DocumentIcon size={12} />
-                    Ver PDF
-                  </button>
-                ) : (
-                  <div />
-                )}
+              {/* FOOTER FIJO */}
+              <div className="shrink-0 flex items-center justify-end gap-3 p-4 border-t border-carbon-700/60 bg-carbon-900">
                 <button
                   type="button"
                   onClick={handleCloseModal}

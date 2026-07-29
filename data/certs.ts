@@ -2,7 +2,7 @@ export interface Certification {
   id: string;
   title: string;
   issuer: "Cisco Networking Academy" | "Netzun";
-  type: "career_path" | "specialization" | "course";
+  type: "career_path" | "specialization" | "course" | "certification";
   category: "soc" | "infra" | "pentesting" | "general";
   date: string;
   credentialId?: string;
@@ -161,8 +161,8 @@ export const CERTIFICATIONS: Certification[] = [
     category: "soc",
     date: "28 de Mayo, 2026",
     credentialId: "270BB5D4",
-    pdfUrl: "/certs/netzun/estandares-normas.pdf",
-    badgeUrl: "/certs/netzun/estandares-normas.png",
+    pdfUrl: "/certs/netzun/estandares-normas-internacionales.pdf",
+    badgeUrl: "/certs/netzun/estandares-normas-internacionales.png",
     hours: "1 hr 7 min",
     description:
       "Marcos de gobierno de ciberseguridad, familia ISO/IEC 27001, NIST Cybersecurity Framework y normas en sector financiero.",

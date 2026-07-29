@@ -8,9 +8,9 @@ interface FilterBarProps {
 
 const CATEGORIES = [
   { id: "all", label: "Todos" },
+  { id: "soc", label: "SOC" },
   { id: "web", label: "Web" },
-  { id: "red", label: "Red" },
-  { id: "movil", label: "Móvil" },
+  { id: "infra", label: "Infraestructura" },
 ];
 
 export const FilterBar = ({ currentFilter, onSelectFilter }: FilterBarProps) => {
@@ -27,15 +27,15 @@ export const FilterBar = ({ currentFilter, onSelectFilter }: FilterBarProps) => 
             {isActive && (
               <motion.div
                 layoutId="active-pill"
-                className="absolute inset-0 bg-cyan-500/20 border border-cyan-500/50 rounded-lg"
+                className="absolute inset-0 bg-primary-500/20 border border-primary-500/50 rounded-lg"
                 transition={{ type: "spring", stiffness: 380, damping: 30 }}
               />
             )}
             <span
               className={`relative z-10 ${
                 isActive
-                  ? "text-cyan-300 font-bold"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "text-primary-200 font-bold"
+                  : "text-carbon-400 hover:text-accent"
               }`}
             >
               {cat.label}
