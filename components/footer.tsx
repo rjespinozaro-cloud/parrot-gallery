@@ -6,7 +6,6 @@ import { EnvelopeIcon, PhoneIcon } from "@/components/icons";
 const EXTERNAL_LINKS = [
   { label: "GitHub", href: USER_INFO.github },
   { label: "LinkedIn", href: USER_INFO.linkedin },
-  { label: "Portfolio", href: USER_INFO.portfolio },
 ];
 
 export const Footer = () => {

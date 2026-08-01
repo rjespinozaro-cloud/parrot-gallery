@@ -9,7 +9,6 @@ const NAV_LINKS = [
   { label: "Email", href: `mailto:${USER_INFO.email}`, external: false },
   { label: "GitHub", href: USER_INFO.github, external: true },
   { label: "LinkedIn", href: USER_INFO.linkedin, external: true },
-  { label: "Portfolio", href: USER_INFO.portfolio, external: true },
 ];
 
 export const Navbar = () => {

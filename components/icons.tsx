@@ -131,12 +131,12 @@ export const FlagPeruIcon = ({ size = 16, ...props }: IconProps) => (
     width={size}
     height={size}
     viewBox="0 0 24 16"
+    fill="none"
     {...props}
   >
-    <rect width="24" height="16" rx="2" fill="#D91023" />
-    <rect x="0" y="0" width="8" height="16" fill="#FFFFFF" />
-    <rect x="8" y="0" width="8" height="16" fill="#006847" />
-    <rect x="16" y="0" width="8" height="16" fill="#000000" />
+    <rect width="8" height="16" fill="#D91023" />
+    <rect x="8" width="8" height="16" fill="#FFFFFF" />
+    <rect x="16" width="8" height="16" fill="#D91023" />
   </svg>
 );
 
@@ -178,11 +178,11 @@ export const FlagUsIcon = ({ size = 16, ...props }: IconProps) => (
     width={size}
     height={size}
     viewBox="0 0 24 16"
+    fill="none"
     {...props}
   >
-    <rect width="24" height="16" fill="#3C3B6E" />
-    <rect y="0" width="24" height="5.33" fill="#FFFFFF" />
-    <rect y="5.33" width="24" height="5.33" fill="#BF0A30" />
-    <rect y="10.67" width="24" height="5.33" fill="#FFFFFF" />
+    <rect width="24" height="16" fill="#FFFFFF" />
+    <path d="M0 1.23h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.46h24v1.23H0zm0 2.47h24v1.23H0zm0 2.46h24v1.23H0z" fill="#BF0A30" />
+    <rect width="10" height="8.6" fill="#3C3B6E" />
   </svg>
 );
