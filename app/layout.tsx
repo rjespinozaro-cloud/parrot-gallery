@@ -3,6 +3,7 @@ import { DnaBackdrop } from "@/components/dna-backdrop";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { LenisProvider } from "@/components/lenis-provider";
 import "./globals.css";
+import { DnaProvider } from "@/components/dna-provider";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
@@ -87,10 +88,12 @@ export default function RootLayout({
 
         <div className="fixed inset-0 pointer-events-none z-[-1] bg-gradient-to-br from-primary-900/20 via-carbon-900/80 to-violet-900/20 mix-blend-screen" />
 
-        <LenisProvider />
-        <ScrollProgress />
-        <DnaBackdrop />
-        {children}
+        <DnaProvider>
+          <LenisProvider />
+          <ScrollProgress />
+          <DnaBackdrop />
+          {children}
+        </DnaProvider>
       </body>
     </html>
   );
