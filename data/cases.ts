@@ -15,8 +15,8 @@ export interface CaseStudy {
 
 export const USER_INFO = {
   name: "Ronaldiño Joanlu Espinoza Rosario",
-  role: "SOC Analyst Tier 1/L1 · Junior Full-Stack Developer",
-  status: "Disponible para trabajar · Remoto",
+  role: "Desarrollador Full Stack Junior · SOC Analyst L1",
+  status: "Disponible para trabajar",
   github: "https://github.com/rjespinozaro-cloud",
   linkedin: "https://www.linkedin.com/in/ronaldiño-espinoza-rosario-4151a6307/",
   email: "respinozarosario5@gmail.com",

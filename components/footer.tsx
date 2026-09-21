@@ -92,7 +92,7 @@ export const Footer = () => {
           <div className="flex items-center gap-4">
             <CvDropdown direction="up" label="Descargar CV" />
             <span className="font-mono text-[10px] text-slate-400">
-              Disponible para trabajar · Remoto
+              {USER_INFO.status}
             </span>
           </div>
         </div>

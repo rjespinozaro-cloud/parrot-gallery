@@ -43,8 +43,8 @@ export const Navbar = () => {
           <span className="font-mono font-bold text-white tracking-tight text-sm">
             {USER_INFO.name}
           </span>
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono bg-primary-500/15 text-primary-300 border border-primary-500/40">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary-500 animate-pulse" />
+          <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-primary-500/40 bg-primary-500/15 px-2.5 py-0.5 text-xs font-mono text-primary-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary-400 animate-pulse" />
             {USER_INFO.status}
           </span>
         </div>
@@ -65,6 +65,10 @@ export const Navbar = () => {
         </div>
 
         <div className="flex sm:hidden items-center gap-2" ref={mobileMenuRef}>
+          <span className="hidden min-[420px]:inline-flex items-center gap-1 text-[10px] font-mono text-primary-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary-400 animate-pulse" />
+            Disponible
+          </span>
           <CvDropdown direction="down" />
           <button
             id="mobile-menu-btn"
@@ -107,10 +111,8 @@ export const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <div className="mt-1 pt-2 border-t border-carbon-700/60 px-4 pb-1">
-                <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                  {USER_INFO.status}
-                </span>
+              <div className="mt-1 border-t border-carbon-700/60 px-4 pt-2 pb-1 text-[10px] font-mono uppercase tracking-widest text-primary-300">
+                {USER_INFO.status}
               </div>
             </nav>
           )}

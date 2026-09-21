@@ -84,9 +84,9 @@ export default function RootLayout({
           Saltar al contenido principal
         </a>
 
-        <div className="video-fallback-bg" aria-hidden="true" />
+        <div className="soc-backdrop" aria-hidden="true" />
 
-        <div className="fixed inset-0 pointer-events-none z-[-1] bg-gradient-to-br from-primary-900/20 via-carbon-900/80 to-violet-900/20 mix-blend-screen" />
+        <div className="fixed inset-0 pointer-events-none z-[-1] bg-gradient-to-br from-cyan-950/20 via-carbon-900/80 to-amber-950/20 mix-blend-screen" />
 
         <DnaProvider>
           <LenisProvider />
